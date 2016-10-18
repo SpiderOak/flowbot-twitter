@@ -1,0 +1,5 @@
+{% if not user -%}
+  Invalid twitter username
+{%- else -%}
+  I'm now following {{ user.username }}
+{%- endif %}

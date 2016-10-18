@@ -1,0 +1,9 @@
+{% if not users -%}
+Not following anyone.
+
+{%- else -%}
+This channel is following:
+{%- for user in users %}
+{{ user.username }}
+{%- endfor %}
+{%- endif %}
