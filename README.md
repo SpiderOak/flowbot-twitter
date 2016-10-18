@@ -5,7 +5,7 @@
 4. Run bot `python run.py`
 
 ## Interacting with the bot
-The bot supports the following commands:
+The bot supports the following commands (assuming the name of the twitter bot is `TwitterBot`:
 - `@TwitterBot /follow myUser`: instructs the bot to follow a twitter user with the username `myUser` in the current Semaphor channel.
 - `@TwitterBot /unfollow myUser`: Stop following `myUser` in the current channel
-- `@TitterBot /following`: List all twitter usernames currently being followed in the channel.
+- `@TwitterBot /following`: List all twitter usernames currently being followed in the channel.
