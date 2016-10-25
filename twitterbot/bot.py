@@ -18,6 +18,7 @@ class TwitterBot(FlowBot):
         super(TwitterBot, self).__init__(settings)
         self.twitter = TwitterStream(self, settings)
         self._update_twitter_stream()
+        self.message_all_channels('Starting up...')
 
     def commands(self):
         """Respond to these commands with the given methods."""
@@ -69,7 +70,7 @@ class TwitterBot(FlowBot):
 
     def render_to_channel(self, channel_id, template_name, context):
         """Render the context to a message in the given channel."""
-        self.server.flow.send_message(
+        self.send_message(
             cid=channel_id,
             oid=self.config.org_id,
             msg=template.get_template(template_name).render(**context)

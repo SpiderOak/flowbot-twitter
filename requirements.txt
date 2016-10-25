@@ -1,3 +1,4 @@
 git+git://github.com/SpiderOak/flow-python.git@master
-git+ssh://git@github.com/SpiderOak/flowbot-barebones.git@master
 jinja2
+emoji
+tweepy
