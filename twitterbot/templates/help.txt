@@ -1,0 +1,10 @@
+[Mention Commands]
+==================
+/follow <twitter-username>
+      Follow tweets related to this twitter user.
+
+/unfollow <twitter-username>
+      Stop following this twitter user.
+
+/following
+      List all twitter users followed in current channel.

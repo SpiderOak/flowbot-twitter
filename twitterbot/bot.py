@@ -25,8 +25,14 @@ class TwitterBot(FlowBot):
         return {
             '/following': self.following,
             '/follow': self.follow,
-            '/unfollow': self.unfollow
+            '/unfollow': self.unfollow,
+            '/help': self.help
         }
+
+    @mentioned
+    def help(self, message):
+        """Show all the command options."""
+        self.render_response(message, 'help.txt', {})
 
     @mentioned
     def following(self, message):
