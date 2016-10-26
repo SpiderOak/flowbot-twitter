@@ -1,3 +1,6 @@
+> Please Note: This project has not undergone a security review.
+
+
 ## Download & Install
 1. Make sure you've installed [SpiderOak Semaphor](https://spideroak.com/opendownload) on your machine.
 2. Clone this repo: `git clone git@github.com:SpiderOak/flowbot-twitter.git`
