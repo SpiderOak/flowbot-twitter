@@ -1,4 +1,5 @@
 git+git://github.com/SpiderOak/flow-python.git@master
+git+git://github.com/SpiderOak/flowbot.git@master
 jinja2
 emoji
 tweepy
