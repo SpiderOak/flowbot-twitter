@@ -26,7 +26,9 @@ class TwitterBot(FlowBot):
             '/following': self.following,
             '/follow': self.follow,
             '/unfollow': self.unfollow,
-            '/help': self.help
+            '/help': self.help,
+            'mention stop': self.mention_stop,
+            'mention': self.mention_me
         }
 
     @mentioned
@@ -69,26 +71,60 @@ class TwitterBot(FlowBot):
                 "username": username
             })
 
-    def render_response(self, orig_message, template_name, context):
+    @mentioned
+    def mention_me(self, message):
+        """Remember to highlight a user when a tweet is above threshold.
+
+        If no threshold number is given, just show the user the current
+        threshold.
+        """
+        match = re.search('mention (\d+)', message.get('text', ''))
+        match_stop = re.search('mention stop', message.get('text', ''))
+        user_id = message['senderAccountId']
+
+        if match:
+            follower_threshold = match.group(1)
+            self._update_mention_threshold(user_id, follower_threshold)
+            self.render_response(message, 'new_mention.txt', {
+                "follower_threshold": follower_threshold
+            }, highlight=[user_id])
+        elif not match_stop:
+            current_threshold = self._get_mention_thresholds().get(user_id)
+            self.render_response(message, 'current_mention_threshold.txt', {
+                "current_threshold": current_threshold,
+                "botname": self.config.display_name
+            }, highlight=[user_id])
+
+    @mentioned
+    def mention_stop(self, message):
+        """Stop mentioning the user."""
+        user_id = message['senderAccountId']
+        self._update_mention_threshold(user_id, None)
+        self.render_response(
+            message, 'mention_stop.txt', {}, highlight=[user_id])
+
+    def render_response(self, orig_message, template_name, context, highlight=None):  # NOQA
         """Render the context to the message template and respond."""
         response = template.get_template(template_name)
-        self.reply(orig_message, response.render(**context))
+        self.reply(
+            orig_message, response.render(**context), highlight=highlight)
 
-    def render_to_channel(self, channel_id, template_name, context):
+    def render_to_channel(self, channel_id, template_name, context, highlight=None):  # NOQA
         """Render the context to a message in the given channel."""
         msg = template.get_template(template_name).render(**context)
-        self.message_channel(channel_id, msg)
+        self.message_channel(channel_id, msg, highlight=highlight)
 
     def handle_tweet(self, tweet):
         """Handle a tweet from the twitter steam."""
         target_usernames = util.get_target_usernames_from_tweet(tweet)
+        highlight = self._get_account_ids_to_highlight(tweet)
 
         for channel_id, users in self._get_all_following().iteritems():
             for user in users:
                 if user['username'] in target_usernames:
                     self.render_to_channel(channel_id, 'tweet.txt', {
                         'tweet': tweet
-                    })
+                    }, highlight=highlight)
 
     def _get_twitter_user(self, username):
         """Return a user object if the username is valid.
@@ -133,6 +169,27 @@ class TwitterBot(FlowBot):
         """Update list of users followed in this channel."""
         db_key = 'follow_%s' % (channel_id, )
         self.channel_db.new(db_key, users)
+
+    def _get_mention_thresholds(self):
+        """Get the list of mention thresholds."""
+        mentions = self.channel_db.get_last('mentions')
+        return mentions if mentions else {}
+
+    def _get_account_ids_to_highlight(self, tweet):
+        """Get account_ids to highlight given tweet's follower count."""
+        account_ids = []
+        follower_count = tweet['user']['followers_count']
+        for account_id, threshold in self._get_mention_thresholds().items():
+            if follower_count and threshold.isdigit():
+                if follower_count > int(threshold):
+                    account_ids.append(account_id)
+        return account_ids
+
+    def _update_mention_threshold(self, user_id, follower_threshold):
+        """Save a user_id :: follower_threshold record."""
+        mentions = self._get_mention_thresholds()
+        mentions[user_id] = follower_threshold
+        self.channel_db.new('mentions', mentions)
 
     def _usernames_followed(self, channel_id):
         """Return a list of usernames followed in the channel."""
