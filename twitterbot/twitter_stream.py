@@ -22,6 +22,7 @@ class TwitterStream(tweepy.StreamListener):
     def follow(self, user_ids):
         """Disconnext the existing stream then follow the new users."""
         if user_ids:
+            self.user_ids = user_ids
             self.stream.disconnect()
             self.stream = self._new_stream()
             self.stream.filter(follow=[str(id) for id in user_ids], async=True)
@@ -36,6 +37,21 @@ class TwitterStream(tweepy.StreamListener):
 
     def _new_stream(self):
         return tweepy.Stream(auth=self.api.auth, listener=self)
+
+    def on_exception(self, exception):
+        """Attempt to restart the stream using the last known user_ids."""
+        return self._restart()
+
+    def on_timeout(self):
+        """Attempt to restart the stream using the last known user_ids."""
+        return self._restart()
+
+    def _restart(self):
+        """Try restarting based on last known user_ids."""
+        self.stream.disconnect()
+        if self.user_ids:
+            self.follow(self.user_ids)
+        return True
 
     def on_data(self, data):
         data = json.loads(data)
