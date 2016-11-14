@@ -117,13 +117,14 @@ class TwitterBot(FlowBot):
     def handle_tweet(self, tweet):
         """Handle a tweet from the twitter steam."""
         target_usernames = util.get_target_usernames_from_tweet(tweet)
+        highlight = self._get_account_ids_to_highlight(tweet)
 
         for channel_id, users in self._get_all_following().iteritems():
             for user in users:
                 if user['username'] in target_usernames:
                     self.render_to_channel(channel_id, 'tweet.txt', {
                         'tweet': tweet
-                    })
+                    }, highlight=highlight)
 
     def _get_twitter_user(self, username):
         """Return a user object if the username is valid.
@@ -173,6 +174,15 @@ class TwitterBot(FlowBot):
         """Get the list of mention thresholds."""
         mentions = self.channel_db.get_last('mentions')
         return mentions if mentions else {}
+
+    def _get_account_ids_to_highlight(self, tweet):
+        """Get account_ids to highlight given tweet's follower count."""
+        account_ids = []
+        follower_count = tweet['user']['followers_count']
+        for account_id, threshold in self._get_mention_thresholds():
+            if follower_count > int(threshold):
+                account_ids.append(account_id)
+        return account_ids
 
     def _update_mention_threshold(self, user_id, follower_threshold):
         """Save a user_id :: follower_threshold record."""
