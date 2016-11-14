@@ -76,11 +76,8 @@ class TwitterBot(FlowBot):
 
     def render_to_channel(self, channel_id, template_name, context):
         """Render the context to a message in the given channel."""
-        self.send_message(
-            cid=channel_id,
-            oid=self.config.org_id,
-            msg=template.get_template(template_name).render(**context)
-        )
+        msg = template.get_template(template_name).render(**context)
+        self.message_channel(channel_id, msg)
 
     def handle_tweet(self, tweet):
         """Handle a tweet from the twitter steam."""
