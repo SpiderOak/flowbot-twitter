@@ -179,9 +179,10 @@ class TwitterBot(FlowBot):
         """Get account_ids to highlight given tweet's follower count."""
         account_ids = []
         follower_count = tweet['user']['followers_count']
-        for account_id, threshold in self._get_mention_thresholds():
-            if follower_count > int(threshold):
-                account_ids.append(account_id)
+        for account_id, threshold in self._get_mention_thresholds().items():
+            if follower_count and threshold.isdigit():
+                if follower_count > int(threshold):
+                    account_ids.append(account_id)
         return account_ids
 
     def _update_mention_threshold(self, user_id, follower_threshold):
