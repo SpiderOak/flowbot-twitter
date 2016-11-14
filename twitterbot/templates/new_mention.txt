@@ -1,0 +1,1 @@
+Ok, I'll notify you whenever a tweet's owner has more than {{ follower_threshold }} followers!
