@@ -23,10 +23,10 @@ class TwitterBot(FlowBot):
     def commands(self):
         """Respond to these commands with the given methods."""
         return {
-            '/following': self.following,
-            '/follow': self.follow,
-            '/unfollow': self.unfollow,
-            '/help': self.help,
+            'following': self.following,
+            'follow': self.follow,
+            'unfollow': self.unfollow,
+            'help': self.help,
             'mention stop': self.mention_stop,
             'mention': self.mention_me
         }
@@ -34,7 +34,9 @@ class TwitterBot(FlowBot):
     @mentioned
     def help(self, message):
         """Show all the command options."""
-        self.render_response(message, 'help.txt', {})
+        self.render_response(message, 'help.txt', {
+            'botname': self.config.display_name
+        })
 
     @mentioned
     def following(self, message):
