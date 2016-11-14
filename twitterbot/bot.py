@@ -48,9 +48,10 @@ class TwitterBot(FlowBot):
     @mentioned
     def follow(self, message):
         """Follow twitter user in the same channel as the original message."""
-        match = re.search('/follow (\w+)', message.get('text', ''))
+        match = re.search(' follow (\w+)', message.get('text', ''))
+        unfollow_match = re.search(' unfollow (\w+)', message.get('text', ''))
 
-        if match:
+        if match and not unfollow_match:
             username = match.group(1)
             user = self._get_twitter_user(username)
 
@@ -64,7 +65,7 @@ class TwitterBot(FlowBot):
     @mentioned
     def unfollow(self, message):
         """Stop following a twitter user."""
-        match = re.search('/unfollow (\w+)', message.get('text', ''))
+        match = re.search(' unfollow (\w+)', message.get('text', ''))
 
         if match:
             username = match.group(1)
