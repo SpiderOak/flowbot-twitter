@@ -1,6 +1,7 @@
 import tweepy
 import json
 import logging
+import time
 
 
 class TwitterStream(tweepy.StreamListener):
@@ -18,6 +19,16 @@ class TwitterStream(tweepy.StreamListener):
         )
         self.api = tweepy.API(self.auth)
         self.stream = self._new_stream()
+
+    def auto_restart(self):
+        """Auto restart the twitter stream every 2 minutes."""
+        while True:
+            try:
+                time.sleep(120)
+                self._restart()
+            except (SystemExit, KeyboardInterrupt):
+                self.stream.disconnect()
+                break
 
     def follow(self, user_ids):
         """Disconnext the existing stream then follow the new users."""

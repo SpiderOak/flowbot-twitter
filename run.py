@@ -10,7 +10,6 @@ if __name__ == "__main__":
         settings = json.load(data_file)
 
     bot = TwitterBot(settings)
-    bot.run(block=True)
-
-    bot.twitter.stream.disconnect()
+    bot.run(block=False)
+    bot.twitter.auto_restart()
     exit()
