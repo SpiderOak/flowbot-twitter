@@ -18,7 +18,6 @@ class TwitterBot(FlowBot):
         super(TwitterBot, self).__init__(settings)
         self.twitter = TwitterStream(self, settings)
         self._update_twitter_stream()
-        self.message_all_channels('Starting up...')
 
     def commands(self):
         """Respond to these commands with the given methods."""
