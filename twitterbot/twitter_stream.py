@@ -54,6 +54,7 @@ class TwitterStream(tweepy.StreamListener):
         return True
 
     def on_data(self, data):
+        """Handle new stream data."""
         data = json.loads(data)
         self.twitterbot.handle_tweet(data)
         return True
@@ -64,8 +65,4 @@ class TwitterStream(tweepy.StreamListener):
             print("Check your Twitter tokens in 'local_settings'.")
             raise SystemExit
         print(status_code)
-        return True  # To continue listening
-
-    def on_timeout(self):
-        logging.error('Timeout...')
         return True  # To continue listening
