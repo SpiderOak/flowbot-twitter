@@ -23,3 +23,11 @@ def get_target_usernames_from_tweet(tweet):
         usernames.append(tweet.in_reply_to_screen_name)
 
     return usernames
+
+
+def comma_delimited_number(number):
+    """Return a comma-delimited version of the number.
+
+    e.g. 12345 -> 12,345
+    """
+    return format(int(number), ",d")
