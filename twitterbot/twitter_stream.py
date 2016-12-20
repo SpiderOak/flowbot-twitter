@@ -1,5 +1,4 @@
 import tweepy
-import json
 import logging
 import time
 
@@ -19,14 +18,17 @@ class TwitterStream(tweepy.StreamListener):
         )
         self.api = tweepy.API(self.auth)
         self.stream = self._new_stream()
+        self.user_ids = None
 
-    def auto_restart(self):
-        """Auto restart the twitter stream every 2 minutes."""
+    def auto_restart(self, interval=60):
+        """Auto restart the twitter stream every [interval] seconds if down."""
         while True:
             try:
-                time.sleep(120)
-                self._restart()
+                if self.stream and self.stream.running is False:
+                    self._restart()
+                time.sleep(interval)
             except (SystemExit, KeyboardInterrupt):
+                self.twitterbot.cleanup()
                 self.stream.disconnect()
                 break
 
@@ -51,11 +53,11 @@ class TwitterStream(tweepy.StreamListener):
 
     def on_exception(self, exception):
         """Attempt to restart the stream using the last known user_ids."""
-        return self._restart()
+        return False
 
     def on_timeout(self):
         """Attempt to restart the stream using the last known user_ids."""
-        return self._restart()
+        return False
 
     def _restart(self):
         """Try restarting based on last known user_ids."""
@@ -64,10 +66,12 @@ class TwitterStream(tweepy.StreamListener):
             self.follow(self.user_ids)
         return True
 
-    def on_data(self, data):
-        """Handle new stream data."""
-        data = json.loads(data)
-        self.twitterbot.handle_tweet(data)
+    def on_status(self, status):
+        """Handle new status message."""
+        try:
+            self.twitterbot.handle_tweet(status)
+        except Exception as e:
+            print(e)
         return True
 
     def on_error(self, status_code):

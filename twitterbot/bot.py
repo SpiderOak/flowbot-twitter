@@ -22,12 +22,12 @@ class TwitterBot(FlowBot):
     def commands(self):
         """Respond to these commands with the given methods."""
         return {
-            'following': self.following,
-            'follow': self.follow,
-            'unfollow': self.unfollow,
-            'help': self.help,
-            'mention stop': self.mention_stop,
-            'mention': self.mention_me
+            '/following': self.following,
+            '/follow': self.follow,
+            '/unfollow': self.unfollow,
+            '/help': self.help,
+            '/mention stop': self.mention_stop,
+            '/mention': self.mention_me
         }
 
     @mentioned
@@ -47,7 +47,7 @@ class TwitterBot(FlowBot):
     @mentioned
     def follow(self, message):
         """Follow twitter user in the same channel as the original message."""
-        match = re.search(' follow (\w+)', message.get('text', ''))
+        match = re.search('/follow (\w+)', message.get('text', ''))
         unfollow_match = re.search(' unfollow (\w+)', message.get('text', ''))
 
         if match and not unfollow_match:
@@ -64,7 +64,7 @@ class TwitterBot(FlowBot):
     @mentioned
     def unfollow(self, message):
         """Stop following a twitter user."""
-        match = re.search(' unfollow (\w+)', message.get('text', ''))
+        match = re.search('/unfollow (\w+)', message.get('text', ''))
 
         if match:
             username = match.group(1)
@@ -80,8 +80,8 @@ class TwitterBot(FlowBot):
         If no threshold number is given, just show the user the current
         threshold.
         """
-        match = re.search('mention (\d+)', message.get('text', ''))
-        match_stop = re.search('mention stop', message.get('text', ''))
+        match = re.search('/mention (\d+)', message.get('text', ''))
+        match_stop = re.search('/mention stop', message.get('text', ''))
         user_id = message['senderAccountId']
 
         if match:
@@ -180,10 +180,10 @@ class TwitterBot(FlowBot):
     def _get_account_ids_to_highlight(self, tweet):
         """Get account_ids to highlight given tweet's follower count."""
         account_ids = []
-        follower_count = tweet['user']['followers_count']
+        followers_count = tweet.user.followers_count
         for account_id, threshold in self._get_mention_thresholds().items():
-            if follower_count and threshold.isdigit():
-                if follower_count > int(threshold):
+            if followers_count and threshold and threshold.isdigit():
+                if followers_count > int(threshold):
                     account_ids.append(account_id)
         return account_ids
 

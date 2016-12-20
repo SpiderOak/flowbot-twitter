@@ -1,19 +1,19 @@
 Hello, I'm a Twitter bot! I can watch twitter users and post their tweets in this channel. I can even notify you if a tweet comes from a user with more than a certain number of followers.
 
-@{{ botname }} follow <twitter-username>
+**@{{ botname }} /follow <twitter-username>**
       Follow tweets related to this twitter user.
 
-@{{ botname }} unfollow <twitter-username>
+**@{{ botname }} /unfollow <twitter-username>**
       Stop following this twitter user.
 
-@{{ botname }} following
+**@{{ botname }} /following**
       List all twitter users followed in current channel.
 
-@{{ botname }} mention <number>
+**@{{ botname }} /mention <number>**
       I'll mention you whenever a tweet appears from an owner with more than <number> followers
 
-@{{ botname }} mention
+**@{{ botname }} /mention**
       I'll tell you what you've current set above
  
-@{{ botname }} mention stop
+**@{{ botname }} /mention stop**
       I'll stop notifiying you when new tweets appear

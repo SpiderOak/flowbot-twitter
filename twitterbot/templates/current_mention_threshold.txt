@@ -1,14 +1,14 @@
 {%- if current_threshold -%}
-I'm currently programmed to notify you whenever a tweet's owner has more than {{ current_threshold }} followers.
+I'm currently programmed to notify you whenever a tweet's owner has more than **{{ current_threshold }}** followers.
 
 You can change this threshold number by doing:
-@{{ botname }} mention <number>
+**@{{ botname }} mention <number>**
 
 Or I can stop notifying you altogether if you do:
-@{{ botname }} mention stop
+**@{{ botname }} mention stop**
 {%- else -%}
 I'm not currently programmed to notify you. You can change this by doing:
-@{{ botname }} mention <number>
+**@{{ botname }} mention <number>**
 
 Then, I'll notify you whenever a tweet's owner has more than {{ current_threshold }} followers.
 {% endif %}
